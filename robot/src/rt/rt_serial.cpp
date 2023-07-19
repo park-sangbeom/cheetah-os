@@ -12,13 +12,19 @@
 #include <string.h>
 #include <unistd.h>
 
-#define termios asmtermios
+// #define termios asmtermios
 
-#include <asm/termios.h>
+// #include <asm/termios.h>
 
-#undef termios
+// #undef termios
 
-#include <termios.h>
+// #include <termios.h>
+#include <math.h>
+#include <pthread.h>
+// #include <stropts.h>
+#include <asm/ioctls.h>
+#include <sys/ioctl.h>
+#include <asm/termbits.h>
 #include <math.h>
 #include <pthread.h>
 #include <stropts.h>
