@@ -12,7 +12,6 @@ int main(int argc, char** argv) {
     (void)argc;
     (void)argv;
     Lowlevel_Controller lowlevel_controller; 
-    std::cout << "work" ;
     lowlevel_controller.pub_sub_lcm();
     return 0;
 }

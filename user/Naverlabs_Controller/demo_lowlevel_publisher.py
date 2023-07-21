@@ -4,6 +4,8 @@ import lcm
 from exlcm import lowlevel_cmd, lowlevel_state
 import json 
 import numpy as np 
+
+
 walking_data = [json.loads(line) for line in open('./test.json', 'r')]
 walking_np = np.array(walking_data)
 print(walking_np.shape)
@@ -23,8 +25,8 @@ def interpolation(x_anchor, num_interpol, key):
             interpoled_x_arr = np.append(interpoled_x_arr, interpoled_x, axis=0)
     return interpoled_x_arr
 
-interpoled_dof_pos = interpolation(walking_np, 500, 'dof_pos')
-interpoled_dof_vel = interpolation(walking_np, 500, 'dof_vel')
+interpoled_dof_pos = interpolation(walking_np, 10, 'dof_pos')
+interpoled_dof_vel = interpolation(walking_np, 10, 'dof_vel')
 # cmd.q_des = (0.1,-0.8, 1.62, -0.1,-0.8, 1.62,0.1,-0.8, 1.62, -0.1,-0.8, 1.62)
 # cmd.qd_des = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 # cmd.p_des = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -57,22 +59,26 @@ for i in range(times):
         lc.publish("low_level_cmds", cmd.encode())
 
 
-
+cnt = 0
+import time 
+s = time.time()
 while True:
     for idx, (dof_pos, dof_vel) in enumerate(zip(interpoled_dof_pos, interpoled_dof_vel)):
         cmd.q_des = dof_pos
         cmd.qd_des = dof_vel#(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         cmd.p_des = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         cmd.v_des = dof_vel
-        cmd.kp_joint = (300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300) # (20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20)
-        cmd.kd_joint = (15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15) # (5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
-        cmd.kp_cartesian = (5, 0, 0, 5, 0, 0, 5, 0, 0,5, 0, 0)#(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        cmd.kd_cartesian = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        cmd.kp_joint = (17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17) #(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20)#(300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300) # 
+        cmd.kd_joint = (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4) #(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)#(15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15) # (
+        cmd.kp_cartesian = (17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17) #(5, 0, 0, 5, 0, 0, 5, 0, 0,5, 0, 0) #(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        cmd.kd_cartesian = (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4) #(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         cmd.tau_ff =  (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         cmd.f_ff = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        if idx%20==0:
-            lc.publish("low_level_cmds", cmd.encode())
 
+        if idx%1==0:
+            cnt+=1
+            print("Time: ", time.time()-s, cnt)
+            lc.publish("low_level_cmds", cmd.encode())
 try:
     while True:
         lc.publish("low_level_cmds", cmd.encode())

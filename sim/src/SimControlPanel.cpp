@@ -851,7 +851,7 @@ void SimControlPanel::on_goHomeButton_clicked() {
   homeState.bodyPosition = Vec3<double>(0, 0, 0.4);
   homeState.bodyVelocity = SVec<double>::Zero();
   homeState.q = DVec<double>(12);
-  homeState.q << -0.05, -0.8, 1.7, 0.05, -0.8, 1.7, -0.05, -0.8, 1.7, 0.05, -0.8, 1.7;
+  homeState.q << -0.1, -0.8, 1.62, 0.1, -0.8, 1.62, -0.1, -0.8, 1.62, 0.1, -0.8, 1.62; //-0.05, -0.8, 1.7, 0.05, -0.8, 1.7, -0.05, -0.8, 1.7, 0.05, -0.8, 1.7;
   homeState.qd = homeState.q;
 
   _simulation->setRobotState(homeState);

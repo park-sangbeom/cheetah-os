@@ -41,13 +41,17 @@ cmd.f_ff = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 # LCM communication
 lc = lcm.LCM()
 lc.subscribe("low_level_states", robot_state_handler)
+s = time.time()
+cnt = 0 
 try:
     while True:
-        s = time.time()
-
+        cnt+=1
+        if time.time()-s >1:
+            print("time: ", time.time()-s, cnt)
+        if cnt==1500:
+            break 
         lc.handle()
         lc.publish("low_level_cmds", cmd.encode())
-        print(time.time()-s)
 except KeyboardInterrupt:
     pass
 
