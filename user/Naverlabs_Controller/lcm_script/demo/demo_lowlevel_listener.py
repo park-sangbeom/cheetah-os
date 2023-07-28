@@ -1,7 +1,7 @@
 # Wang Yinuo, 07/25/2021, dbdxwyn@163.com
 # If you want to control robot by python, use this example and add your controller to it.
 import lcm
-from exlcm import lowlevel_cmd, lowlevel_state
+from lcm_msg import lowlevel_state
 import sys 
 import json 
 import time 

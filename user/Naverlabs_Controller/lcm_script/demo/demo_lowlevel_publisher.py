@@ -1,7 +1,7 @@
 # Wang Yinuo, 07/25/2021, dbdxwyn@163.com
 # If you want to control robot by python, use this example and add your controller to it.
 import lcm
-from exlcm import lowlevel_cmd, lowlevel_state
+from lcm_msg import lowlevel_cmd
 import json 
 import numpy as np 
 import time 
@@ -12,7 +12,7 @@ cmd = lowlevel_cmd()
 # LCM communication
 lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=255")
 times = 1000
-interval = 0.1
+interval = 0.001
 for i in range(times):
     s = time.time()
     q_des = [-0.5346+(0.5346+0.1*i/times),-1.099+(-1.099+0.8)*i/times, 2.6585-(2.6585-1.62)*i/times, \

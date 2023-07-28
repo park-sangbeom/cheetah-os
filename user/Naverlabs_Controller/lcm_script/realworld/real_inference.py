@@ -1,7 +1,9 @@
 import torch
-from mini_gym.envs.base.class_lcm import LCMPublisher
-import time 
+import sys
+sys.path.append('..')
+from lowlevel_msg.class_lcm import LCMPublisher
 from multiprocessing.connection import Client
+import time 
 
 def np2torch(x_np,device='cpu'):
     if x_np is None:
@@ -72,6 +74,7 @@ def main(subscribe):
         while subscribe.poll():
             tmp = subscribe.recv()
             q_des = tmp.copy()
+        print("q_des", q_des)
         lcm_publihser.publisher(q_des=q_des,
                     kp_joint=kp_joint,
                     kd_joint=kd_joint,

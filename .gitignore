@@ -7,3 +7,4 @@ wandb/*
 *.csv
 *.TXT
 env/__pycache__/
+mc-build/

@@ -1,4 +1,4 @@
-from mini_gym.envs.base.class_lcm import LightweightCommunicationsMarshalling, RepeatedTimer, LCMSubscriber
+from lcm_script.lcm_msg.class_lcm import LCMSubscriber
 from multiprocessing.connection import Client, Listener
 import time
 
