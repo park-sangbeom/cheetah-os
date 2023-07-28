@@ -65,6 +65,7 @@ void Lowlevel_Controller::handleLowlevelCmdLCM(const lcm::ReceiveBuffer *rbuf,
                        _legController->commands[leg].tauFeedForward[i],userParameters.max_tau);
                 _legController->commands[leg].tauFeedForward[i] = userParameters.max_tau;
             }
+        // printf("[Leg: %d][qDes: %f] \n", 3*leg+i, _legController->commands[leg].qDes[i]);
         }
     }
 }

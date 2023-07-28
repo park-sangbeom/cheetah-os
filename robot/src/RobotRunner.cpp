@@ -16,6 +16,10 @@
 #include "ParamHandler.hpp"
 #include "Utilities/Timer.h"
 #include "Controllers/PositionVelocityEstimator.h"
+
+#include <chrono>
+#include <iostream>
+
 //#include "rt/rt_interface_lcm.h"
 
 RobotRunner::RobotRunner(RobotController* robot_ctrl, 
@@ -93,6 +97,12 @@ void RobotRunner::run() {
 
   static int count_ini(0);
   ++count_ini;
+
+  // typedef std::chrono::high_resolution_clock Time; 
+  // typedef std::chrono::duration<float> fsec;
+  // auto s = Time::now();
+
+
   if (count_ini < 10) {
     _legController->setEnabled(false);
   } else if (20 < count_ini && count_ini < 30) {
@@ -140,7 +150,9 @@ void RobotRunner::run() {
     }
 
   }
-
+  // auto end = Time::now();
+  // fsec fs = end-s;
+  // std::cout << "Elapsed Time: " << fs.count() << "seconds" << std::endl;
 
 
   // Visualization (will make this into a separate function later)

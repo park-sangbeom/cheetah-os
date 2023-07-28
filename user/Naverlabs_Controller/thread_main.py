@@ -15,7 +15,7 @@ if __name__=="__main__":
     lcm_module.subscriber()
 
     # Initialize 
-    HZ = 1000 
+    HZ = 100 
     TIME = 1
     INITSTEPS = HZ*TIME
     frequency = TIME/HZ
@@ -40,6 +40,7 @@ if __name__=="__main__":
     stand_q = q_des
     # Standing 
     for i in range(1000):
+        print(i)
         rt = RepeatedTimer(frequency, lcm_module.publisher,q_des=q_des,
                         # kp_joint=(17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17),
                         # kd_joint=(0.4,0.4, 0.4,0.4,0.4, 0.4, 0.4,0.4, 0.4, 0.4,0.4, 0.4),
@@ -54,7 +55,7 @@ if __name__=="__main__":
             sleep(frequency)
         finally:
             rt.stop() 
-    
+    print("Done,")
     # Down 
     HZ = 1000 
     TIME = 1
@@ -81,7 +82,7 @@ if __name__=="__main__":
 
     final_q = q_des
     # Standing 
-    for i in range(10000):
+    for i in range(100):
         rt = RepeatedTimer(frequency, lcm_module.publisher,q_des=final_q,
                         # kp_joint=(17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17),
                         # kd_joint=(0.4,0.4, 0.4,0.4,0.4, 0.4, 0.4,0.4, 0.4, 0.4,0.4, 0.4),

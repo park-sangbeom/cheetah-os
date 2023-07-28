@@ -18,10 +18,12 @@ class RepeatedTimer(object):
         self.start()
 
     def _run(self):
+        # print("run1")
         self.is_running = False
         self.start()
+        # print("run2")
         self.function(*self.args, **self.kwargs)
-
+        # print("run3")
     def start(self):
         if not self.is_running:
             self._timer = Timer(self.interval, self._run)
