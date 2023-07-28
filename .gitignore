@@ -1,1 +1,9 @@
 build/
+wandb/*
+*.*.pyc
+*.pyc
+*.png
+*.pth
+*.csv
+*.TXT
+env/__pycache__/
