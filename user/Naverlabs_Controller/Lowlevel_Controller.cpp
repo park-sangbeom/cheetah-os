@@ -1,5 +1,4 @@
 #include "Lowlevel_Controller.hpp"
-
 void Lowlevel_Controller::initializeController(){
 
     _legController->_maxTorque = userParameters.max_tau;
