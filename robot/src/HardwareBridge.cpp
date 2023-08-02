@@ -260,12 +260,12 @@ void MiniCheetahHardwareBridge::run() {
         exit(1);
       }
 
-      try {
-        _userControlParameters->initializeFromYamlFile(THIS_COM "config/lowlevel-user-parameters.yaml");
-      } catch(std::exception& e) {
-        printf("Failed to initialize user parameters from yaml file: %s\n", e.what());
-        exit(1);
-      }
+      // try {
+      //   _userControlParameters->initializeFromYamlFile(THIS_COM "config/lowlevel-user-parameters.yaml");
+      // } catch(std::exception& e) {
+      //   printf("Failed to initialize user parameters from yaml file: %s\n", e.what());
+      //   exit(1);
+      // }
 
       if(!_userControlParameters->isFullyInitialized()) {
         printf("Failed to initialize all user parameters\n");
