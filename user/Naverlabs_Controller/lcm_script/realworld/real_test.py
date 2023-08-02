@@ -1,4 +1,3 @@
-import torch
 import sys
 sys.path.append('..')
 from msg.class_lcm import LowLevelCommandPublisher
@@ -13,7 +12,7 @@ def np2torch(x_np,device='cpu'):
     return x_torch
 
 class RepeatedTimerInference(object):
-    def __init__(self, interval, lcm_publisher, subscribe, duration, 
+    def __init__(self, interval, lcm_publisher, subscribe=None, duration=2, 
                  kp_joint=[20.0] * 12, kd_joint=[0.5] * 12):
         self.interval   = interval
         self.lcm_publisher = lcm_publisher
@@ -51,16 +50,23 @@ class RepeatedTimerInference(object):
             self._run()
             time.sleep(max(self.interval-(time.time() - s), 0))
 
+        while self.step_time < self.duration+5: 
+            s = time.time()
+            self._run()
+            time.sleep(max(self.interval-(time.time() - s), 0))
+
+
     def stand_up(self):
-        while self.subscribe.poll():
-            self.subscribe.recv()
-        self.q_des = [self.init_joint[i] + (self.default_joint[i] - self.init_joint[i]) * (self.step_time/self.duration) for i in range(len(self.init_joint))]
+        if self.step_time<self.duration:
+            self.q_des = [self.init_joint[i] + (self.default_joint[i] - self.init_joint[i]) * (self.step_time/self.duration) for i in range(len(self.init_joint))]
+        else: 
+            self.q_des = self.default_joint
         self.lcm_publisher.publisher(q_des=self.q_des,
                     kp_joint=self.kp_joint,
                     kd_joint=self.kd_joint)
         self.step_time +=self.interval
 
-def main(subscribe):
+def main():
     # Hyperparameter 
     HZ = 500 
     interval = 1/HZ
@@ -70,28 +76,7 @@ def main(subscribe):
 
     lcm_publihser = LowLevelCommandPublisher()
     # Stand up 
-    rt = RepeatedTimerInference(interval=interval, lcm_publisher=lcm_publihser, subscribe=subscribe, duration=duartion)
-    q_des = rt.q_des
-
-    # Periodic Task 
-    while True:
-        s = time.time()
-        while subscribe.poll():
-            tmp = subscribe.recv()
-            q_des = tmp.copy()
-        print("q_des", q_des)
-        lcm_publihser.publisher(q_des=q_des,
-                    kp_joint=kp_joint,
-                    kd_joint=kd_joint,
-                    )
-        time.sleep(max(interval-(time.time() - s), 0))
+    rt = RepeatedTimerInference(interval=interval, lcm_publisher=lcm_publihser, duration=duartion)
 
 if __name__ == '__main__':
-    while True:
-        try:
-            subscribe_policy_output = Client('/tmp/feedback_output2')
-        except:
-            continue
-        break
-
-    main(subscribe_policy_output)
+    main()

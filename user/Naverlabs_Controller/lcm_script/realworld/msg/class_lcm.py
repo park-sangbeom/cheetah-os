@@ -144,7 +144,7 @@ class SPIDataSubscriber:
             print("   qd_abad    = %s" % str(self.msg.qd_abad))
             print("   qd_hip         = %s" % str(self.msg.qd_hip))
             print("   qd_knee    = %s" % str(self.msg.qd_knee))
-            print("   flags = %s" % str(self.msg.kp_cartflagsesian))
+            # print("   flags = %s" % str(self.msg.kp_cartflagsesian))
             print("   spi_driver_status      = %s" % str(self.msg.spi_driver_status))
 
 class SPICommandSubscriber:
@@ -184,19 +184,21 @@ class SPICommandSubscriber:
 
 if __name__=="__main__":
     lcm_pub = LowLevelCommandPublisher()
-    lcm_sub = LowLevelStateSubscriber(VERBOSE=True)
+    lcm_sub = LowLevelCommandSubscriber(VERBOSE=True)
     interval = 0.002 
     s = time.time()
+    print("Start")
     while True: 
+        s = time.time()
         lcm_sub.lc.handle()
-        lcm_pub.publisher(
-        q_des=(-0.807, -1., 2., \
-                0.807, -1.2, 2.4, \
-                -0.807, -1.2, 2.4, \
-                0.807, -1.2, 2.4, ), 
-        q_vel=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
-        kp_joint=(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20),
-        kd_joint=(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5),
-        kp_cartesian=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        kd_cartesian=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+        # lcm_pub.publisher(
+        # q_des=(-0.807, -1., 2., \
+        #         0.807, -1.2, 2.4, \
+        #         -0.807, -1.2, 2.4, \
+        #         0.807, -1.2, 2.4, ), 
+        # q_vel=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
+        # kp_joint=(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20),
+        # kd_joint=(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5),
+        # kp_cartesian=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        # kd_cartesian=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
         time.sleep(max(interval-(time.time() - s), 0))
