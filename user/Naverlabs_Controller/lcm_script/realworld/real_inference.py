@@ -79,7 +79,6 @@ def main(subscribe):
         while subscribe.poll():
             tmp = subscribe.recv()
             q_des = tmp.copy()
-        print("q_des", q_des)
         lcm_publihser.publisher(q_des=q_des,
                     kp_joint=kp_joint,
                     kd_joint=kd_joint,

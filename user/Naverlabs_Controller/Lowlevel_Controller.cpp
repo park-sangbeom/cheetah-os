@@ -48,11 +48,10 @@ void Lowlevel_Controller::handleLowlevelCmdLCM(const lcm::ReceiveBuffer *rbuf,
     (void)rbuf;
     (void)chan;
 
-    // _mtx.lock();
+    _mtx.lock();
     memcpy(&_cmd, msg, sizeof(lowlevel_cmd));
-    // _mtx.unlock();    
+    _mtx.unlock();    
     printf("[LowLevel Ctrl] Received LCM message\n");
-    //    Subscribe Commands
 }
 /*
  * Subs commands from Python Controller and send it to robot

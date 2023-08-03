@@ -184,7 +184,7 @@ class SPICommandSubscriber:
 
 if __name__=="__main__":
     lcm_pub = LowLevelCommandPublisher()
-    lcm_sub = LowLevelCommandSubscriber(VERBOSE=True)
+    lcm_sub = SPIDataSubscriber(VERBOSE=True)
     interval = 0.002 
     s = time.time()
     print("Start")

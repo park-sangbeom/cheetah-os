@@ -5,6 +5,8 @@ from msg.lowlevel_msg.lowlevel_cmd import lowlevel_cmd
 from msg.lowlevel_msg.lowlevel_state import lowlevel_state
 from msg.spi_msg.spi_command_t import spi_command_t
 from msg.spi_msg.spi_data_t import spi_data_t
+from msg.simulator_msg.simulator_lcmt import simulator_lcmt
+import json 
 import numpy as np 
 from threading import Timer
 from time import sleep 
@@ -181,13 +183,51 @@ class SPICommandSubscriber:
             print("   tau_knee_ff      = %s" % str(self.msg.tau_knee_ff))
             print("   flags      = %s" % str(self.msg.flags))
 
+class SimulatorStateSubscriber:
+    def __init__(self,                  
+                 sub_channel="simulator_state",
+                 udpm="udpm://239.255.76.67:7667?ttl=255",
+                 txt_file="data.txt",
+                 VERBOSE=False,
+                 SAVE=False):
+        self.lc          = lcm.LCM(udpm)
+        self.sub_channel = sub_channel 
+        self.txt_file    = txt_file 
+        self.VERBOSE     = VERBOSE
+        self.msg         = None 
+        self.SAVE        = SAVE 
+        self.simulator_lcmt = simulator_lcmt()
+        self.lc.subscribe(self.sub_channel, self.robot_state_handler)
+        self.json_path = "joint_data.json"
+        self.step = 0 
+
+    def robot_state_handler(self, channel, data):
+        self.step += 1
+        self.msg = self.simulator_lcmt.decode(data)
+        if self.VERBOSE:
+            print("   vb    = %s" % str(self.msg.vb))
+            print("   rpy   = %s" % str(self.msg.rpy))
+            print("   timesteps    = %s" % str(self.msg.timesteps))
+            print("   p    = %s" % str(self.msg.p))
+            print("   v         = %s" % str(self.msg.v))
+            print("   q    = %s" % str(self.msg.q))
+            print("   qd = %s" % str(self.msg.qd))
+            print("   tau      = %s" % str(self.msg.tau))
+            print("   f_foot   = %s" % str(self.msg.f_foot))
+            print("   p_foot    = %s" % str(self.msg.p_foot))
+
+        if self.SAVE:
+            with open(self.json_path, "a") as f:
+                content={"step":self.step,
+                         "q":self.msg.q}
+                f.write(json.dumps(content)+'\n')
 
 if __name__=="__main__":
     lcm_pub = LowLevelCommandPublisher()
-    lcm_sub = LowLevelStateSubscriber(VERBOSE=True)
+    lcm_sub = SimulatorStateSubscriber(VERBOSE=True, SAVE=True)
     interval = 0.002 
     s = time.time()
-    while True: 
+    while time.time()-s<3: 
         lcm_sub.lc.handle()
         lcm_pub.publisher(
         q_des=(-0.807, -1., 2., \

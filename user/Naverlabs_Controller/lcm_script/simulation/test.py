@@ -2,6 +2,7 @@ import sys
 sys.path.append('..')
 from msg.class_lcm import LowLevelCommandPublisher
 import time 
+import json 
 
 class RepeatedTimerInference(object):
     def __init__(self, interval, lcm_publisher, subscribe=None, duration=2, 
@@ -45,14 +46,7 @@ class RepeatedTimerInference(object):
             s = time.time()
             self.stand_up()
             time.sleep(max(self.interval-(time.time() - s), 0))
-        
-        self.step_time = 0
-
-        while self.step_time < self.duration:
-            s = time.time()
-            self.stand_down()
-            time.sleep(max(self.interval-(time.time() - s), 0))
-
+ 
     def stand_up(self):
         if self.step_time<self.duration:
             self.q_des = [self.init_joint[i] + (self.default_joint[i] - self.init_joint[i]) * (self.step_time/self.duration) for i in range(len(self.init_joint))]
@@ -81,9 +75,23 @@ def main():
     kp_joint = [20.0] * 12
     kd_joint = [0.5] * 12
 
-    lcm_publihser = LowLevelCommandPublisher()
+    lcm_publisher = LowLevelCommandPublisher()
     # Stand up 
-    rt = RepeatedTimerInference(interval=interval, lcm_publisher=lcm_publihser, duration=duartion)
+    rt = RepeatedTimerInference(interval=interval, lcm_publisher=lcm_publisher, duration=duartion)
+    last_pose_step_time=0
+    q_list=[]
+    for line in open('joint_data.json','r'):
+        data = json.loads(line)
+        q_list.append([data['q'][0]+data['q'][1]+data['q'][2]+data['q'][3]])
+    while last_pose_step_time<len(q_list[:400]):
+        s = time.time()
+        # last_q_des = [last_q[i] - (last_q[i] - last_default_joint[i]) * (last_pose_step_time/last_pose_duration) for i in range(len(last_q))]
+        lcm_publisher.publisher(q_des=q_list[last_pose_step_time][0],
+                    kp_joint=kp_joint,
+                    kd_joint=kd_joint)
+        last_pose_step_time +=1 #+=interval
+        time.sleep(max(interval-(time.time() - s), 0))
+    print("Done.")
 
 if __name__ == '__main__':
     s = time.time()

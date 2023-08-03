@@ -1,6 +1,8 @@
 
 import isaacgym
 assert isaacgym
+import sys 
+sys.path.append('../../')
 from isaacgym.torch_utils import *
 from mini_gym.envs import *
 from mini_gym.envs.base.legged_robot_config import Cfg
@@ -97,14 +99,17 @@ def subscriber_main(policy, subscribe, publish):
     msg = None
     obs_dict = dict()
     init = True
+    HZ = 500 
+    interval = 1/HZ
     agent_num = 1 
     obs_dim = 42 
     history_leng = 15
+    gait_change_time_step = 0
     default_q = [0.1, -0.8, 1.62, \
                 -0.1, -0.8, 1.62, \
                 0.1, -0.8, 1.62, \
                 -0.1, -0.8, 1.62]
-    commands = [6.0,0,0]
+    commands = [0.9,0.0,0.5] # Slow Rotate Motion 
     action_prev = np2torch(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(1, -1))
     obs_history = torch.zeros(agent_num,obs_dim*history_leng)
     while True:
@@ -146,8 +151,7 @@ def subscriber_main(policy, subscribe, publish):
 
             q_des_trans = T(q_des[0])
             publish.send(q_des_trans)
-        time.sleep(max(0.002-(time.time() - s), 0))
-        # time.sleep(max(0.02-(time.time() - s), 0))
+        time.sleep(max(interval-(time.time() - s), 0))
 
 if __name__=="__main__":
     device ='cpu' #torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -157,7 +161,7 @@ if __name__=="__main__":
     subscribe = None
     while True:
         try:
-            subscribe = Client('/tmp/lcm_states')
+            subscribe = Client('/tmp/lcm_states5')
         except:
             continue
         break
