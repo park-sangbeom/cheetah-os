@@ -1,15 +1,7 @@
 import sys
 sys.path.append('..')
 from msg.class_lcm import LowLevelCommandPublisher
-from multiprocessing.connection import Client
 import time 
-
-def np2torch(x_np,device='cpu'):
-    if x_np is None:
-        x_torch = None
-    else:
-        x_torch = torch.tensor(x_np,dtype=torch.float32,device=device)
-    return x_torch
 
 class RepeatedTimerInference(object):
     def __init__(self, interval, lcm_publisher, subscribe=None, duration=2, 
