@@ -3,6 +3,7 @@ void Lowlevel_Controller::initializeController(){
 
     _legController->_maxTorque = userParameters.max_tau;
     _legController->_legsEnabled = true;
+    _lcm.subscribe("low_level_cmds",&Lowlevel_Controller::handleLowlevelCmdLCM,this);
 
 }
 
@@ -46,27 +47,12 @@ void Lowlevel_Controller::handleLowlevelCmdLCM(const lcm::ReceiveBuffer *rbuf,
                                              const lowlevel_cmd *msg) {
     (void)rbuf;
     (void)chan;
+
+    // _mtx.lock();
+    memcpy(&_cmd, msg, sizeof(lowlevel_cmd));
+    // _mtx.unlock();    
+    printf("[LowLevel Ctrl] Received LCM message\n");
     //    Subscribe Commands
-    for (int leg = 0; leg < 4; ++leg) {
-        for (int i = 0; i < 3; ++i) {
-            _legController->commands[leg].forceFeedForward[i] = msg->f_ff[3*leg+i];
-            _legController->commands[leg].tauFeedForward[i] = msg->tau_ff[3*leg+i];
-            _legController->commands[leg].qDes[i] = msg->q_des[3*leg+i];
-            _legController->commands[leg].qdDes[i] = msg->qd_des[3*leg+i];
-            _legController->commands[leg].kpJoint(i,i) = msg->kp_joint[3*leg+i];
-            _legController->commands[leg].kdJoint(i,i) = msg->kd_joint[3*leg+i];
-            _legController->commands[leg].pDes[i] = msg->p_des[3*leg+i];
-            _legController->commands[leg].vDes[i] = msg->v_des[3*leg+i];
-            _legController->commands[leg].kpCartesian(i,i) = msg->kp_cartesian[3*leg+i];
-            _legController->commands[leg].kdCartesian(i,i) = msg->kd_cartesian[3*leg+i];
-            if (_legController->commands[leg].tauFeedForward[i] > userParameters.max_tau){
-                printf("[LowLevel Ctrl] Torque has exceeded the max torque limitation, modify %f to %f",
-                       _legController->commands[leg].tauFeedForward[i],userParameters.max_tau);
-                _legController->commands[leg].tauFeedForward[i] = userParameters.max_tau;
-            }
-        // printf("[Leg: %d][qDes: %f] \n", 3*leg+i, _legController->commands[leg].qDes[i]);
-        }
-    }
 }
 /*
  * Subs commands from Python Controller and send it to robot
@@ -100,6 +86,29 @@ void Lowlevel_Controller::pub_sub_lcm() {
     _lcm.publish("low_level_states",&low_state_lcmt);
 
 //    Send Commands to Robot
-    _lcm.subscribe("low_level_cmds",&Lowlevel_Controller::handleLowlevelCmdLCM,this);
+    {
+    _mtx.lock();
+        for (int leg = 0; leg < 4; ++leg) {
+            for (int i = 0; i < 3; ++i) {
+                _legController->commands[leg].forceFeedForward[i] = _cmd.f_ff[3*leg+i];
+                _legController->commands[leg].tauFeedForward[i] = _cmd.tau_ff[3*leg+i];
+                _legController->commands[leg].qDes[i] = _cmd.q_des[3*leg+i];
+                _legController->commands[leg].qdDes[i] = _cmd.qd_des[3*leg+i];
+                _legController->commands[leg].kpJoint(i,i) = _cmd.kp_joint[3*leg+i];
+                _legController->commands[leg].kdJoint(i,i) = _cmd.kd_joint[3*leg+i];
+                _legController->commands[leg].pDes[i] = _cmd.p_des[3*leg+i];
+                _legController->commands[leg].vDes[i] = _cmd.v_des[3*leg+i];
+                _legController->commands[leg].kpCartesian(i,i) = _cmd.kp_cartesian[3*leg+i];
+                _legController->commands[leg].kdCartesian(i,i) = _cmd.kd_cartesian[3*leg+i];
+                if (_legController->commands[leg].tauFeedForward[i] > userParameters.max_tau){
+                    printf("[LowLevel Ctrl] Torque has exceeded the max torque limitation, modify %f to %f",
+                        _legController->commands[leg].tauFeedForward[i],userParameters.max_tau);
+                    _legController->commands[leg].tauFeedForward[i] = userParameters.max_tau;
+                }
+            // printf("[Leg: %d][qDes: %f] \n", 3*leg+i, _legController->commands[leg].qDes[i]);
+            }
+        }
+    _mtx.unlock();
+    }
 
 }

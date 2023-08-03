@@ -30,11 +30,13 @@ class Lowlevel_Controller:public RobotController{
   protected:
     Vec3<float> zero_vec3;
     LowLevelUserParameters userParameters;
+    lowlevel_cmd _cmd; 
   private:
     long l_iter=0;
     int motion_iter=0;
     lcm::LCM _lcm;
     std::thread _lcmThread;
+    std::mutex _mtx;              
 };
 
 #endif
