@@ -11,6 +11,7 @@ class RepeatedTimerInference(object):
         self.step_time  = 0
         self.duration   = duration
         self.subscribe  = subscribe
+        
         # self.init_joint = [
         # -0.807, -1.2, 2.4, \
         # 0.807, -1.2, 2.4, \
@@ -23,11 +24,16 @@ class RepeatedTimerInference(object):
                            0.8165483474731445, -1.0071662664413452, 2.6456193923950195]
 
         self.q_des      = self.init_joint
-        self.default_joint = self.init_joint
-        # self.default_joint = [-0.1,-0.8,1.62, 
-        #                       0.1,-0.8,1.62, 
-        #                       -0.1, -0.8,1.62, 
-        #                       0.1,-0.8,1.62]
+
+        # self.default_joint = self.init_joint
+        # self.default_joint = [-0.7890825271606445, -0.9639183282852173, 2.525369453430176, 
+        #                    0.7814531326293945, -0.9799400568008423, 2.579815435409546, 
+        #                    -0.9088659286499023, -0.9816077947616577, 2.5333565711975098, 
+        #                    0.8165483474731445, -1.0071662664413452, 2.5456193923950195]
+        self.default_joint = [-0.1,-0.8,1.62, 
+                              0.1,-0.8,1.62, 
+                              -0.1, -0.8,1.62, 
+                              0.1,-0.8,1.62]
         self.kp_joint = kp_joint
         self.kd_joint = kd_joint 
         # MIT Cheetah:      [FR, FL, RR, RL]
@@ -43,10 +49,6 @@ class RepeatedTimerInference(object):
             self._run()
             time.sleep(max(self.interval-(time.time() - s), 0))
 
-        while self.step_time < self.duration+3: 
-            s = time.time()
-            self._run()
-            time.sleep(max(self.interval-(time.time() - s), 0))
 
 
     def stand_up(self):
