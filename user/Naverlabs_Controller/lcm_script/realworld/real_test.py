@@ -40,22 +40,34 @@ class RepeatedTimerInference(object):
         # Rapid Locomotion: [FL, FR, RL, RR]    
         self.start()
 
-    def _run(self):
-        self.stand_up()
-
     def start(self):
         while self.step_time < self.duration:
             s = time.time()
-            self._run()
+            self.stand_up()
             time.sleep(max(self.interval-(time.time() - s), 0))
+        
+        self.step_time = 0
 
-
+        while self.step_time < self.duration:
+            s = time.time()
+            self.stand_down()
+            time.sleep(max(self.interval-(time.time() - s), 0))
 
     def stand_up(self):
         if self.step_time<self.duration:
             self.q_des = [self.init_joint[i] + (self.default_joint[i] - self.init_joint[i]) * (self.step_time/self.duration) for i in range(len(self.init_joint))]
         else: 
             self.q_des = self.default_joint
+        self.lcm_publisher.publisher(q_des=self.q_des,
+                    kp_joint=self.kp_joint,
+                    kd_joint=self.kd_joint)
+        self.step_time +=self.interval
+
+    def stand_down(self):
+        if self.step_time<self.duration:
+            self.q_des = [self.default_joint[i] - (self.default_joint[i] - self.init_joint[i]) * (self.step_time/self.duration) for i in range(len(self.init_joint))]
+        else: 
+            self.q_des = self.init_joint
         self.lcm_publisher.publisher(q_des=self.q_des,
                     kp_joint=self.kp_joint,
                     kd_joint=self.kd_joint)
