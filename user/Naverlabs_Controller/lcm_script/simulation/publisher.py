@@ -1,4 +1,4 @@
-from lcm_script.lcm_msg.class_lcm import LCMSubscriber
+from msg.class_lcm import LowLevelStateSubscriber
 from multiprocessing.connection import Client, Listener
 import time
 
@@ -6,7 +6,7 @@ def main():
     publish = Listener('/tmp/lcm_states').accept()
 
     # lcm_module = LightweightCommunicationsMarshalling(VERBOSE=False)
-    lcm_module = LCMSubscriber()
+    lcm_module = LowLevelStateSubscriber()
     s=0
     last_send = time.time()
     while True:

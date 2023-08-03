@@ -8,3 +8,8 @@ wandb/*
 *.TXT
 env/__pycache__/
 mc-build/
+.pyc 
+.__pycache__ 
+__pycache__/*
+.python-version 
+settings.json

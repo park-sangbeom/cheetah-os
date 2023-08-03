@@ -1,7 +1,7 @@
 import torch
 import sys 
 sys.path.append('..')
-from lcm_script.lcm_msg.class_lcm import LCMPublisher
+from msg.class_lcm import LowLevelCommandPublisher
 import time 
 from multiprocessing.connection import Client
 
@@ -63,7 +63,7 @@ def main(subscribe):
     kp_joint = [20.0] * 12
     kd_joint = [0.5] * 12
 
-    lcm_publihser = LCMPublisher()
+    lcm_publihser = LowLevelCommandPublisher()
     # Stand up 
     rt = RepeatedTimerInference(interval=interval, lcm_publisher=lcm_publihser, subscribe=subscribe, duration=duartion)
     q_des = rt.q_des

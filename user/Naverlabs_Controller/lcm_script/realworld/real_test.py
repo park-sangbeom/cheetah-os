@@ -31,10 +31,11 @@ class RepeatedTimerInference(object):
                            0.8165483474731445, -1.0071662664413452, 2.6456193923950195]
 
         self.q_des      = self.init_joint
-        self.default_joint = [-0.1,-0.8,1.62, 
-                              0.1,-0.8,1.62, 
-                              -0.1, -0.8,1.62, 
-                              0.1,-0.8,1.62]
+        self.default_joint = self.init_joint
+        # self.default_joint = [-0.1,-0.8,1.62, 
+        #                       0.1,-0.8,1.62, 
+        #                       -0.1, -0.8,1.62, 
+        #                       0.1,-0.8,1.62]
         self.kp_joint = kp_joint
         self.kd_joint = kd_joint 
         # MIT Cheetah:      [FR, FL, RR, RL]
@@ -50,7 +51,7 @@ class RepeatedTimerInference(object):
             self._run()
             time.sleep(max(self.interval-(time.time() - s), 0))
 
-        while self.step_time < self.duration+5: 
+        while self.step_time < self.duration+3: 
             s = time.time()
             self._run()
             time.sleep(max(self.interval-(time.time() - s), 0))
@@ -79,4 +80,6 @@ def main():
     rt = RepeatedTimerInference(interval=interval, lcm_publisher=lcm_publihser, duration=duartion)
 
 if __name__ == '__main__':
+    s = time.time()
     main()
+    print(time.time()-s)
