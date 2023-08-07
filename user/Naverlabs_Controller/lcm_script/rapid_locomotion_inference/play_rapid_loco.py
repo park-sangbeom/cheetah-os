@@ -26,6 +26,8 @@ from lcm_agent import LCMAgent
 from wrapper import Wrapper 
 from state_estimator import StateEstimator
 from stand_up_down import stand_up_publisher
+from lowlevel_cmd_publisher import LowLevelCommandPublisher
+import json 
 
 def load_policy(device='cpu'):
     # prepare environment
@@ -85,16 +87,37 @@ def load_policy(device='cpu'):
     return policy
 
 def main(lc, control_dt, commands, obs_dim, history_leng, device='cpu'):
+    # Trot gait 
+    trot_motion=[]; trot_joint_cnt = 0
+    for line in open('trot_joint.json','r'):
+        data = json.loads(line)
+        trot_motion.append([data['q'][0]+data['q'][1]+data['q'][2]+data['q'][3]])
+    kp_joint = [20.0] * 12
+    kd_joint = [0.5] * 12
     policy = load_policy(device=device)
     stand_up_publisher()
     se = StateEstimator(lc=lc)
     lcm_agent = LCMAgent(se=se, control_dt=control_dt, commands=commands)
+    lcm_publisher = LowLevelCommandPublisher()
     se.spin()
     wrapper = Wrapper(env=lcm_agent, obs_history_length=obs_dim*history_leng) 
     obs_dict = wrapper.reset()
-    while True:
+    real_time = time.time()
+    # 8 seconds for rapid locomotion
+    while (time.time()-real_time)<2.0:
         actions = policy(obs_dict)
         obs_dict = wrapper.step(actions)
+
+    # 500 Hz joint trajectory
+    while trot_joint_cnt<len(trot_motion[:400]):
+        s = time.time()
+        lcm_publisher.publisher(q_des=trot_motion[trot_joint_cnt][0],
+                    kp_joint=kp_joint,
+                    kd_joint=kd_joint)
+        trot_joint_cnt +=1 
+        time.sleep(max(0.002-(time.time() - s), 0))
+
+
 
 if __name__=="__main__":
     recent_runs = sorted(glob.glob(f"{MINI_GYM_ROOT_DIR}/runs/rapid-locomotion/*/*/*"), key=os.path.getmtime)
@@ -104,5 +127,5 @@ if __name__=="__main__":
     control_dt = 1/HZ
     obs_dim = 42 
     history_leng = 15
-    commands= np.array([2.0, 0, 0.]) #np.array([0.5, 0, 0.9])
+    commands= np.array([2.0, 0, 0.]) #np.array([0.9, 0, 0.5]) #np.array([2.0, 0, 0.]) #np.array([0.5, 0, 0.9])
     main(lc, control_dt, commands, obs_dim, history_leng)
