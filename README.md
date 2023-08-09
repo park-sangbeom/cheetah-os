@@ -77,7 +77,6 @@ cd cheetah-os/build
 Example)
 ```
 ./user/Naverlabs_Controller/naverlabs_ctrl m s
-
 ```
 3: Cheetah 3, m: Mini Cheetah
 s: simulation, r: robot
