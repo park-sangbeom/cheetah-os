@@ -1,11 +1,53 @@
-## Cheetah-Software
-This repository contains the Robot and Simulation software project.  For a getting started guide, see the documentation folder.
+## Introduction
+This repostiory is based on [MIT-Cheetah-Software](https://github.com/mit-biomimetics/Cheetah-Software), we developed this repository which contains the Robot and Simulation software for the Mini-Cheetah project by NAVERLABS. 
 
-The common folder contains the common library with dynamics and utilities
-The resources folder will contain data files, like CAD of the robot used for the visualization
-The robot folder will contain the robot program
-The sim folder will contain the simulation program. It is the only program which depends on QT.
-The third-party will contain *small* third party libraries that we have modified. This should just be libsoem for Cheetah 3, which Pat modified at one point.
+## Dependency Pkgs
+* Follwing dependencies, we've been tested on Ubuntu 20.04. 
+* Install dependent packages 
+```
+sudo apt-get install freeglut3-dev
+sudo apt-get install libblas-dev liblapack-dev
+sudo apt install libeigen3-dev liblcm-dev liblcm1 liblcm-java
+sudo apt-get install build-essential
+sudo apt-get install mesa-common-dev libglu1-mesa-dev
+sudo apt-get install libqt5gamepad5-dev
+sudo apt install libglib2.0-dev
+sudo apt install cmake 
+```
+
+* Set gcc, g++ 7.x version 
+```
+sudo apt install gcc-7 g++-7
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 10
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 10
+```
+
+* Install LCM
+```
+sudo apt update && sudo apt install build-essential g++ libglib2.0-dev cmake
+git clone https://github.com/lcm-proj/lcm.git 
+cd lcm
+mkdir build
+cd build
+cmake ..
+make 
+sudo make install
+```
+
+* Install Eigien
+```
+git clone https://gitlab.com/libeigen/eigen.git
+cd eigen
+git checkout 3.3 
+mkdir build 
+cd build 
+cmake ..
+make 
+sudo make install
+```
+
+* Install Qt-5.10.0 
+Install Qt downloader on [Qt Group](https://www.qt.io/download), then select 5.10.0 version via Archive filter in downloader
 
 ## Build
 To build all code:
@@ -17,57 +59,28 @@ cmake ..
 make -j4
 ```
 
-If you are building code on your computer that you would like to copy over to the mini cheetah, you must replace the cmake command with
-```
-cmake -DMINI_CHEETAH_BUILD=TRUE
-```
-otherwise it will not work.  If you are building mini cheetah code one the mini cheetah computer, you do not need to do this.
-
-This build process builds the common library, robot code, and simulator. If you just change robot code, you can simply run `make -j4` again. If you change LCM types, you'll need to run `cmake ..; make -j4`. This automatically runs `make_types.sh`.
-
-To test the common library, run `common/test-common`. To run the robot code, run `robot/robot`. To run the simulator, run `sim/sim`.
-
-Part of this build process will automatically download the gtest software testing framework and sets it up. After it is done building, it will produce a `libbiomimetics.a` static library and an executable `test-common`.  Run the tests with `common/test-common`. This output should hopefully end with
-
-```
-[----------] Global test environment tear-down
-[==========] 18 tests from 3 test cases ran. (0 ms total)
-[  PASSED  ] 18 tests.
-```
 ## Run simulator
 To run the simulator:
-1. Open the control board
+1. You need to setup the UDP Multicast route to use LCM on a single host
 ```
+sudo ifconfig lo multicast
+sudo route add -net 224.0.0.0 netmask 240.0.0.0 dev lo
+```
+2. Open the control board
+```
+cd cheetah-os/build
 ./sim/sim
 ```
-2. In the another command window, run the robot control code
+3. In the another command window, run the robot control code
 ```
 ./user/${controller_folder}/${controller_name} ${robot_name} ${target_system}
 ```
 Example)
 ```
-./user/JPos_Controller/jpos_ctrl 3 s
+./user/Naverlabs_Controller/naverlabs_ctrl m s
+
 ```
 3: Cheetah 3, m: Mini Cheetah
 s: simulation, r: robot
 
-## Run Mini cheetah
-1. Create build folder `mkdir mc-build`
-2. Build as mini cheetah executable `cd mc-build; cmake -DMINI_CHEETAH_BUILD=TRUE ..; make -j`
-3. Connect to mini cheetah over ethernet, verify you can ssh in
-4. Copy program to mini cheetah with `../scripts/send_to_mini_cheetah.sh`
-5. ssh into the mini cheetah `ssh user@10.0.0.34`
-6. Enter the robot program folder `cd robot-software-....`
-7. Run robot code `./run_mc.sh` 
 
-
-
-## Dependencies:
-- Qt 5.10 - https://www.qt.io/download-qt-installer
-- LCM - https://lcm-proj.github.io/ (Please make it sure that you have a java to let lcm compile java-extension together)
-- Eigen - http://eigen.tuxfamily.org
-- `mesa-common-dev`
-- `freeglut3-dev`
-- `libblas-dev liblapack-dev`
-
-To use Ipopt, use CMake Ipopt option. Ex) cmake -DIPOPT_OPTION=ON ..
