@@ -1,9 +1,8 @@
 ## Introduction
-This repostiory is based on [MIT-Cheetah-Software](https://github.com/mit-biomimetics/Cheetah-Software), we developed this repository which contains the Robot and Simulation software for the Mini-Cheetah project by NAVERLABS. 
+This repostiory is based on [MIT-Cheetah-Software](https://github.com/mit-biomimetics/Cheetah-Software), we developed this repository which contains the Robot and Simulation software for the Mini-Cheetah project by NAVER LABS. 
 
-## Dependency Pkgs
+## Dependencies
 * Follwing dependencies, we've been tested on Ubuntu 20.04. 
-* Install dependent packages 
 ```
 sudo apt-get install freeglut3-dev
 sudo apt-get install libblas-dev liblapack-dev
