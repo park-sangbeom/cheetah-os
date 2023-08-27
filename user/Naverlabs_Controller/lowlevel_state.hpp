@@ -42,6 +42,8 @@ class lowlevel_state
 
         float      quat[4];
 
+        float      gravityBody[3];
+
     public:
         /**
          * Encode a message into binary form.
@@ -180,6 +182,8 @@ int lowlevel_state::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->quat[0], 4);
     if(tlen < 0) return tlen; else pos += tlen;
 
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->gravityBody[0], 3);
+    if(tlen < 0) return tlen; else pos += tlen;
     return pos;
 }
 
@@ -229,6 +233,8 @@ int lowlevel_state::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->quat[0], 4);
     if(tlen < 0) return tlen; else pos += tlen;
 
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->gravityBody[0], 3);
+    if(tlen < 0) return tlen; else pos += tlen;
     return pos;
 }
 
@@ -249,6 +255,7 @@ int lowlevel_state::_getEncodedSizeNoHash() const
     enc_size += __float_encoded_array_size(NULL, 3);
     enc_size += __float_encoded_array_size(NULL, 3);
     enc_size += __float_encoded_array_size(NULL, 4);
+    enc_size += __float_encoded_array_size(NULL, 3);
     return enc_size;
 }
 

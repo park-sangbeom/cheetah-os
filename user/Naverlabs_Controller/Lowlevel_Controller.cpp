@@ -62,6 +62,9 @@ void Lowlevel_Controller::pub_sub_lcm() {
 //    Publish States
     memset(&low_state_lcmt, 0, sizeof(low_state_lcmt));
     auto& seResult = _stateEstimator->getResult();
+    Eigen::Vector3f gravityWorld = Eigen::Vector3f::Zero();
+    gravityWorld[2] = -1.0;
+    Eigen::Vector3f gravityBody = seResult.rBody * gravityWorld;
     for (int i = 0; i < 3; ++i) {
         low_state_lcmt.rpy[i] = seResult.rpy[i];
         low_state_lcmt.position[i] = seResult.position[i];
@@ -71,7 +74,9 @@ void Lowlevel_Controller::pub_sub_lcm() {
         low_state_lcmt.omegaWorld[i] = seResult.omegaWorld[i];
         low_state_lcmt.aBody[i] = seResult.aBody[i];
         low_state_lcmt.aWorld[i] = seResult.aWorld[i];
+        low_state_lcmt.gravityBody[i] = gravityBody[i];
     }
+    
     for (int leg = 0; leg < 4; ++leg) {
         low_state_lcmt.quat[leg] = seResult.orientation[leg];
         for (int i = 0; i < 3; ++i) {

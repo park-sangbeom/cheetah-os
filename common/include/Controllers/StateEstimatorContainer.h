@@ -42,7 +42,9 @@ struct StateEstimate {
       lcm_data.rpy[i] = rpy[i];
       lcm_data.omegaBody[i] = omegaBody[i];
       lcm_data.omegaWorld[i] = omegaWorld[i];
+      
     }
+  
 
     for(int i = 0; i < 4; i++) {
       lcm_data.quat[i] = orientation[i];
