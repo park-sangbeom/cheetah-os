@@ -3,7 +3,8 @@ void Lowlevel_Controller::initializeController(){
 
     _legController->_maxTorque = userParameters.max_tau;
     _legController->_legsEnabled = true;
-    _lcm.subscribe("low_level_cmds",&Lowlevel_Controller::handleLowlevelCmdLCM,this);
+    auto sub = _lcm.subscribe("low_level_cmds",&Lowlevel_Controller::handleLowlevelCmdLCM,this);
+    sub->setQueueCapacity(1);
 
 }
 
