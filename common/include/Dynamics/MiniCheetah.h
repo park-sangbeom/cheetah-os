@@ -22,7 +22,7 @@ Quadruped<T> buildMiniCheetah() {
   cheetah._robotType = RobotType::MINI_CHEETAH;
 
   cheetah._bodyMass = 3.3;
-  cheetah._bodyLength = 0.19 * 2;
+  cheetah._bodyLength = 0.2025*2; //0.19 * 2;
   cheetah._bodyWidth = 0.049 * 2;
   cheetah._bodyHeight = 0.05 * 2;
   cheetah._abadGearRatio = 6;
