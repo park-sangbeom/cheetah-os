@@ -1,5 +1,5 @@
 ## Introduction
-This repostiory is based on [MIT-Cheetah-Software](https://github.com/mit-biomimetics/Cheetah-Software), we developed this repository which contains the Robot and Simulation software for the Mini-Cheetah project by NAVER LABS. 
+This repostiory is based on [MIT-Cheetah-Software](https://github.com/mit-biomimetics/Cheetah-Software), we developed this repository which contains the Robot and Simulation software for the Mini-Cheetah project by [NAVER LABS](https://www.naverlabs.com/ambidex). 
 
 ## Dependencies
 * Follwing dependencies, we've been tested on Ubuntu 20.04. 
